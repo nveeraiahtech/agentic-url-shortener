@@ -1,0 +1,45 @@
+                    User
+                      |
+                      |
+                      v
+
+               UrlController
+                      |
+                      v
+
+                UrlService
+                      |
+           ---------------------
+           |                   |
+           v                   v
+
+    UrlRepository     AnalyticsRepository
+           |                   |
+           ---------------------
+                      |
+                      v
+
+                    MySQL
+
+
+=================================================
+
+                Workflow Engine
+
+                      |
+     -------------------------------------
+     |         |        |       |        |
+     v         v        v       v        v
+
+ Requirement Design Impl  Test Docs  Release
+   Agent      Agent Agent Agent Agent Agent
+
+                      |
+                      v
+
+                Approval Gate
+
+                      |
+                      v
+
+                  Audit Log

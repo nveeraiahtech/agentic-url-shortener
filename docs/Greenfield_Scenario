@@ -1,0 +1,31 @@
+Greenfield Scenario
+
+Requirement
+
+ Build a URL Shortener System from scratch.
+
+
+
+Workflow
+
+RequirementAgent
+      ↓
+DesignAgent
+      ↓
+ImplementationAgent
+      ↓
+TestingAgent
+      ↓
+DocumentationAgent
+      ↓
+ReleaseAgent
+
+
+
+Deliverables
+
+Database
+REST APIs
+Unit Tests
+Documentation
+Deployment Ready Code

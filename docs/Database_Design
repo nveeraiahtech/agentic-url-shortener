@@ -1,0 +1,152 @@
+Database Design
+Overview
+
+The application uses MySQL to store:
+
+1. URL Information
+2. Analytics Information
+3. Workflow Audit Information
+
+ER Diagram
+
++------------------+
+|      URLS        |
++------------------+
+| id               |
+| original_url     |
+| short_code       |
++------------------+
+         |
+         |
+         v
+
++------------------+
+|   ANALYTICS      |
++------------------+
+| id               |
+| short_code       |
+| click_count      |
+| last_accessed    |
++------------------+
+
+
++----------------------+
+|   WORKFLOW_AUDIT     |
++----------------------+
+| id                   |
+| agent_name           |
+| status               |
+| created_at           |
++----------------------+
+
+
+Table 1: URLS
+Purpose
+
+Stores original URLs and generated short codes.
+
+SQL
+
+CREATE TABLE urls (
+id BIGINT AUTO_INCREMENT PRIMARY KEY,
+original_url VARCHAR(2000) NOT NULL,
+short_code VARCHAR(20) NOT NULL UNIQUE
+);
+
+Sample Data
+id	original_url	short_code
+1	https://google.com	abc12
+
+Table 2: ANALYTICS
+Purpose
+
+Tracks URL usage statistics.
+
+SQL
+SQL
+CREATE TABLE analytics (
+id BIGINT AUTO_INCREMENT PRIMARY KEY,
+short_code VARCHAR(20) NOT NULL,
+click_count BIGINT DEFAULT 0,
+last_accessed TIMESTAMP NULL
+);
+
+Sample Data
+id	short_code	click_count
+1	abc123	     5
+
+Table 3: WORKFLOW_AUDIT
+Purpose
+
+Stores workflow execution history for governance and traceability.
+
+SQL
+CREATE TABLE workflow_audit (
+id BIGINT AUTO_INCREMENT PRIMARY KEY,
+agent_name VARCHAR(100),
+status VARCHAR(50),
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+Sample Data
+id	agent_name	         status
+1	RequirementAgent	 SUCCESS
+2	DesignAgent	         SUCCESS
+3	ImplementationAgent	 SUCCESS
+
+Database Relationships
+
+URLS
+ |
+ | short_code
+ |
+ v
+
+ANALYTICS
+
+
+WORKFLOW_AUDIT
+
+Independent Table
+
+Tracks workflow execution
+
+Database Assumptions
+Plain Text
+1. Short code is unique.
+ 
+2. One analytics record exists for each short code.
+ 
+3. Audit records are append-only.
+ 
+4. URL deletion is not supported.
+ 
+5. Analytics maintains cumulative click count.
+ 
+Indexing Strategy
+SQL
+CREATE UNIQUE INDEX idx_urls_shortcode
+ON urls(short_code);
+ 
+CREATE INDEX idx_analytics_shortcode
+ON analytics(short_code);
+ 
+CREATE INDEX idx_workflow_agent
+ON workflow_audit(agent_name);
+
+Data Flow
+POST /api/v1/urls
+      |
+      v
+     URLS
+
+GET /{shortCode}
+      |
+      v
+   ANALYTICS
+(click_count++)
+
+Workflow Execution
+      |
+      v
+WORKFLOW_AUDIT
